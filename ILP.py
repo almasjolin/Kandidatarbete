@@ -14,7 +14,7 @@ from gurobipy import GRB
 
 jobs = [] #tom lista med jobb
 p = {} #tom diconary med processing times, p[j]= pj
-m = 0 #antal amskiner
+m = 0 #antal maskiner
 classes = {} #dictionary som mappar jobb till dess klass/resurs
 M = sum(p.values())#satte som summar av alla processingtimes
 epsilon = 0.001
