@@ -7,7 +7,6 @@ Created on Fri Feb 13 14:58:31 2026
 
 jobs = [] #tom lista med jobb
 p = {} #tom diconary med processing times, p[j]= pj
-m = 0 #antal maskiner
 machines = []
 classes = {} #dictionary som mappar jobb till dess klass/resurs
 
@@ -23,7 +22,7 @@ def maskintilldelning(t: dict[int,float]) -> tuple[dict[int,int], dict[int,float
     #Sortera jobben efter starttid
     t_sorted = dict(sorted(t.items(), key=lambda item: item[1]))
     
-    for j,t_j in t_sorted.items():
+    for j in t_sorted.keys():
         i = min(p_m, key=p_m.get) #maskinen med minst totalbelastning
         sigma.add(j,i)
     
