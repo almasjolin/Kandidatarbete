@@ -7,8 +7,8 @@ Created on Fri Feb 13 14:58:31 2026
 
 jobs = [] #tom lista med jobb
 p = {} #tom diconary med processing times, p[j]= pj
-machines = []
-classes = {} #dictionary som mappar jobb till dess klass/resurs
+machines = [] #tom lista med maskiner
+classes = {} #dictionary som mappar klasser till jobb
 
 def maskintilldelning(t: dict[int,float]) -> tuple[dict[int,int], dict[int,float]]:
     #Maskintilldelningsschemat
