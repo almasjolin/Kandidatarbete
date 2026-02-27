@@ -29,8 +29,8 @@ def generate_class_processing_times(m,c,T):
                  
     return class_processing_times
 
-def generate_number_of_jobs(j,c, class_processing_times): 
-    target_sum = j
+def generate_number_of_jobs(n,c, class_processing_times): 
+    target_sum = n
     num_jobs_in_each_class = [1]*c
     remaining = target_sum - c
     
@@ -50,26 +50,32 @@ def generate_number_of_jobs(j,c, class_processing_times):
                 
     return num_jobs_in_each_class
 
-def testgenerator(m, c, j): 
-    T = random.randint(np.ceil(m/j), 100) #kan ändra övre gränsen sen
-    classes=[]
+def testgenerator(m, c, n): 
+    T = random.randint(np.ceil(m/n), 100) #kan ändra övre gränsen sen
+    print("Makespan: ", T)
     jobs= []
     
     class_processing_times = generate_class_processing_times(m, c, T)
-    num_jobs_in_each_class = generate_number_of_jobs(j, c, class_processing_times)
+    num_jobs_in_each_class = generate_number_of_jobs(n, c, class_processing_times)
     
     #slumpar processing time för varje jobb
     for i in range(c): 
         cuts_for_processingtimes = sorted(random.sample(range(1,class_processing_times[i]),num_jobs_in_each_class[i]-1))
         prev = 0
         for cut in cuts_for_processingtimes: 
-            jobs.append((cut-prev,i+1))
+            jobs.append((cut-prev,i))
             prev=cut
-        jobs.append((class_processing_times[i]-prev,i+1))
-     
-    return T,class_processing_times, num_jobs_in_each_class, jobs
+        jobs.append((class_processing_times[i]-prev,i))
+        
+    p = {}
+    classes = {k: [] for k in range(c)}
+    for j,(time,class_) in enumerate(jobs): 
+        p[j] = time
+        classes[class_].append(j)
+    print(n,p,m,classes)
+    return n,p,m,classes
 
-print(testgenerator(5, 10, 200))
+print(testgenerator(5, 10, 20))
 
 
     
