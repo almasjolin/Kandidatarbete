@@ -10,8 +10,11 @@ import gurobipy as gp
 from gurobipy import GRB
 
 #MODELL
-
-def solve_ilp(jobs, p, m, classes):
+#j är antalet jobb
+#p är en dict som mappar jobb till processing times
+#m är antalet maskiner
+#classesär en dict som mappar klasser till de jobb som är i klassen
+def solve_ilp(j, p, m, classes):
     
     model = gp.Model("MSRS")
     
@@ -21,7 +24,7 @@ def solve_ilp(jobs, p, m, classes):
     #VARIABLER
 
     #Starttider
-    t = model.addVars(jobs, lb=0, vtype=GRB.CONTINUOUS, name="t")
+    t = model.addVars(range(j), lb=0, vtype=GRB.CONTINUOUS, name="t")
 
 
     #Makespan
@@ -33,8 +36,8 @@ def solve_ilp(jobs, p, m, classes):
     y = {}  # yj,j'
     z = {}  # zj,j'
 
-    for j in jobs:#sätter binära variablerna x,y,z på varje par av jobb
-        for j_prime in jobs:
+    for j in range(j):#sätter binära variablerna x,y,z på varje par av jobb
+        for j_prime in range(j):
             x[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"x_{j}_{j_prime}")
             y[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"y_{j}_{j_prime}")
             z[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"z_{j}_{j_prime}")
@@ -51,14 +54,14 @@ def solve_ilp(jobs, p, m, classes):
     model.addConstr(T <= M, name="T_upper_bound")
 
     # T måste vara minst lika stor som slutiden för varje jobb
-    for j in jobs:
+    for j in range(j):
         model.addConstr(t[j] + p[j] <= T, name=f"makespan_{j}")
 
 
     #x-constraints (implicerar att x_jj'=1 omm t_j'<=t_j)
 
-    for j in jobs:
-        for j_prime in jobs:
+    for j in range(j):
+        for j_prime in range(j):
             # t_j' <= t_j + (1 - x_j,j')*M kallas constraint1 
             model.addConstr(
                 t[j_prime] <= t[j] + (1 - x[j, j_prime]) * M,
@@ -73,8 +76,8 @@ def solve_ilp(jobs, p, m, classes):
 
     #y-constraints (implicerar att y_jj' = 1 omm t_j<=t_j' + p_j')
 
-    for j in jobs:
-        for j_prime in jobs:
+    for j in range(j):
+        for j_prime in range(j):
             # t_j + epsilon <= t_j' + p_j' + (1 - y_j,j')*M, kallas constraint1 
             model.addConstr(
                 t[j] + epsilon <= t[j_prime] + p[j_prime] + (1 - y[j, j_prime]) * M,
@@ -91,8 +94,8 @@ def solve_ilp(jobs, p, m, classes):
 
     #z-contraints
 
-    for j in jobs:
-        for j_prime in jobs:
+    for j in range(j):
+        for j_prime in range(j):
             # z_j,j' <= y_j,j'
             model.addConstr(
                 z[j, j_prime] <= y[j, j_prime],
@@ -114,9 +117,9 @@ def solve_ilp(jobs, p, m, classes):
 
     #Maskin-constraint
     #Högst m jobb kan köras samtidigt
-    for j in jobs:
+    for j in range(j):
         model.addConstr(
-            gp.quicksum(z[j, j_prime] for j_prime in jobs) <= m,
+            gp.quicksum(z[j, j_prime] for j_prime in range(j)) <= m,
             name=f"machine_limit_{j}")
 
     #Resurs-constraint
@@ -131,7 +134,7 @@ def solve_ilp(jobs, p, m, classes):
     model.optimize()
 
     if model.status == GRB.OPTIMAL:
-        t_sol = {j: t[j].X for j in jobs}
+        t_sol = {j: t[j].X for j in range(j)}
         return T.X, t_sol
     else:
         return None, None
