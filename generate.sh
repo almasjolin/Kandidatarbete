@@ -6,7 +6,7 @@ declare -A script_labels=(
 )
 
 # Number of times each script should run
-N=10
+N=1
 
 # Seed for reproducible random numbers
 SEED=6215
