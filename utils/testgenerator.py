@@ -75,12 +75,11 @@ def generate_number_of_jobs(n,c, class_processing_times):
 #     print(n,p,m,classes)
 #     return n,p,m,classes
 
-m = 5
-c = 8
-n = 15
+m = 3
+c = 5
+n = 20
 
 T = random.randint(np.ceil(m/n), 100) #kan ändra övre gränsen sen
-print("Makespan: ", T)
 jobs= []
   
 class_processing_times = generate_class_processing_times(m, c, T)
