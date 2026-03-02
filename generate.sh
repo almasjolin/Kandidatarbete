@@ -2,7 +2,7 @@
 
 # List of Python scripts and their labels
 declare -A script_labels=(
-    ["generate_test_by_solution.py"]="test"
+    ["testgenerator.py"]="test"
 )
 
 # Number of times each script should run
@@ -28,7 +28,7 @@ for script in "${!script_labels[@]}"; do
     for ((i=1; i<=N; i++)); do
         current_seed=$((SEED + i))
         random_name=$(generate_seeded_name "$label" "$i").txt
-        python3 "utils/$script" --seed "$current_seed" > "tests/$random_name"
+        python "utils/$script" --seed "$current_seed" > "tests/$random_name"
         echo "Output saved to tests/$random_name with seed $current_seed"
     done
 done
