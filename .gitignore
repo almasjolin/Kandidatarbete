@@ -1,0 +1,15 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Mar  2 15:39:22 2026
+
+@author: idagu
+"""
+
+# Python-skräp
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# macOS-skräp
+.DS_Store
