@@ -75,7 +75,7 @@ def testgenerator(m, c, n):
     print(n,p,m,classes)
     return n,p,m,classes
 
-print(testgenerator(5, 10, 20))
+#print(testgenerator(5, 10, 20))
 
 
     
