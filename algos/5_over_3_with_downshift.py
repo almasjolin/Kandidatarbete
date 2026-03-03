@@ -76,7 +76,7 @@ for c in c_2:
         for id in class2ids[c]:
             from_front[i].append(id)
             total_used[i] += job_time[id]
-        if total_used[i] >= T:
+        if total_used[i] > T:
             closed_machines.add(i)
             i += 1
     else:
@@ -122,9 +122,9 @@ for c in c_3:
         from_front[i].append(id)
         total_used[i] += job_time[id]
 
-        if total_used[i] >= T:
-            closed_machines.add(i)
-            i += 1
+    if total_used[i] >= T:
+        closed_machines.add(i)
+        i += 1
 
 
 ## Generate assignments
@@ -141,7 +141,6 @@ for i in range(m):
         machine_assign[id] = i
         time_assign[id] = time - job_time[id]
         time -= job_time[id]
-
 
 ## Downshift
 order = [i for i in range(n)]

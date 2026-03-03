@@ -122,9 +122,9 @@ for c in c_3:
         from_front[i].append(id)
         total_used[i] += job_time[id]
 
-        if total_used[i] >= T:
-            closed_machines.add(i)
-            i += 1
+    if total_used[i] >= T:
+        closed_machines.add(i)
+        i += 1
 
 
 ## Generate assignments

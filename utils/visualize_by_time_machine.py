@@ -97,6 +97,6 @@ ax.set_ylim(0, last_end_time)
 
 plt.grid(axis="y", linestyle="--", alpha=0.7)
 
-plt.savefig("imgs/5_3_enqueue.png")
+plt.savefig("imgs/senast_genererade_bilden.png")
 plt.show()
 

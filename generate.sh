@@ -25,12 +25,10 @@ generate_seeded_name() {
 for script in "${!script_labels[@]}"; do
     label=${script_labels[$script]}
     echo "Running $script ($label) $N times starting with seed $SEED..."
-    for ((i=1; i<=N; i++)); do
-        current_seed=$((SEED + i))
-        random_name=$(generate_seeded_name "$label" "$i").txt
-        python "utils/$script" --seed "$current_seed" > "tests/$random_name"
-        echo "Output saved to tests/$random_name with seed $current_seed"
-    done
+    current_seed=$((SEED + N))
+    random_name=$(generate_seeded_name "$label" "$N").txt
+    python "utils/$script" --seed "$current_seed" > "tests/$random_name"
+    echo "Output saved to tests/$random_name with seed $current_seed"
 done
 
 echo "All scripts executed."
