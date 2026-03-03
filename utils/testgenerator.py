@@ -96,8 +96,8 @@ def generate_number_of_jobs(n,c, class_processing_times):
 
 m = 3
 c = 5
-n = 20
-T = 30
+n = 10
+T = 15
 
 jobs= []
   
@@ -109,15 +109,15 @@ for i in range(c):
     cuts_for_processingtimes = sorted(random.sample(range(1,class_processing_times[i]),num_jobs_in_each_class[i]-1))
     prev = 0
     for cut in cuts_for_processingtimes: 
-        jobs.append((cut-prev,i))
+        jobs.append((cut-prev,i+1))
         prev=cut
-    jobs.append((class_processing_times[i]-prev,i))
+    jobs.append((class_processing_times[i]-prev,i+1))
     
-p = {}
-classes = {k: [] for k in range(c)}
-for j,(time,class_) in enumerate(jobs): 
-    p[j] = time
-    classes[class_].append(j)
+# p = {}
+# classes = {k: [] for k in range(c)}
+# for j,(time,class_) in enumerate(jobs): 
+#     p[j] = time
+#     classes[class_].append(j)
 
 print(m)
 for job_time, job_class in jobs:
