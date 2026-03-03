@@ -142,9 +142,6 @@ for i in range(m):
         time_assign[id] = time - job_time[id]
         time -= job_time[id]
 
-print("Maskintilldelning: ", machine_assign)
-print("Starttider: ", time_assign)
-
 ## Verify possilbility
 for id in range(n):
     assert (
