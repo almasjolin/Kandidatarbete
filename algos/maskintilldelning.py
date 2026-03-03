@@ -4,9 +4,9 @@ Created on Fri Feb 13 14:58:31 2026
 
 @author: idagu
 """
-#t är en dict som mappar jobb till deras starttider
+#t är en dict: [i] --> start time of i:th job, i = 0, ..., n-1
 #m är antalet maskiner
-#p är en dict som mappar jobb till deras processing times
+#p är en dict: [i] --> duration of i:th job, i = 0, ..., n-1
 
 def maskintilldelning(t, m, p):
     #Maskintilldelningsschemat

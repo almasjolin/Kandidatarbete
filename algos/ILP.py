@@ -11,11 +11,10 @@ from gurobipy import GRB
 
 #MODELL
 #n är antalet jobb
-#p är en dict som mappar jobb till processing times
+#p är en dict: [i] --> duration of i:th job, i = 0, ..., n-1
 #m är antalet maskiner
-#classesär en dict som mappar klasser till de jobb som är i klassen
-def solve_ilp(n, p, m, classes):
-    
+#classes är en dict: [c] --> list of id:s of jobs in class c, c = 1, ..., number of classes
+def solve_ilp(n,p,m,classes):   
     model = gp.Model("MSRS")
     
     M = sum(p.values())#satte som summar av alla processingtimes
