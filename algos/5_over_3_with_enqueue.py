@@ -1,5 +1,5 @@
 import sys
-
+import time as tid
 
 ## Read input ##
 job_class = [] # [i] --> class of i:th job
@@ -27,7 +27,7 @@ classes = list(class2ids.keys())
 
 
 ## Algorithm begins ##
-
+start_time = tid.perf_counter()
 # Lower bound for optimal solution
 T = max(
     1/m * sum(job_time),
@@ -181,6 +181,11 @@ for id in range(n):
             )
 
 print("Assignment works.")
+
+end_time = tid.perf_counter()
+execution_time = end_time - start_time
+print(f"Tid: {execution_time:.4f} sekunder")
+
 makespan = 0
 for id in range(n):
     makespan = max(makespan, time_assign[id] + job_time[id])

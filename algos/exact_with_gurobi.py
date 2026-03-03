@@ -6,6 +6,7 @@ Created on Mon Feb 23 15:09:01 2026
 """
 
 import sys
+import time
 from ILP import solve_ilp
 from maskintilldelning import maskintilldelning
 
@@ -33,6 +34,8 @@ for id, line in enumerate(data[1:]):
 
 classes = list(class2ids.keys())
 
+start_time = time.perf_counter()
+
 T = max(
     1/m * sum(job_time.values()),
     max(
@@ -45,6 +48,10 @@ print(f"Lower bound for optimal solution: T = {T}")
 
 makespan, t_solution = solve_ilp(n, job_time, m, class2ids)
 sigma = maskintilldelning(t_solution, m, job_time)
+
+end_time = time.perf_counter()
+execution_time = end_time-start_time
+print(f"Algoritmen tog: {execution_time:.4f} sekunder")
 
 fraction = makespan / T
 

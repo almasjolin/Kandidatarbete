@@ -1,4 +1,8 @@
-using namespace std;
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <chrono>
+#include <map>
 #include <bits/stdc++.h>
 
 #define rep(i,a,b) for(int i = a; i < b; i++)
@@ -278,7 +282,19 @@ int main() {
         classes.push_back(Class(job_sz));
     }
 
-
+    auto start = chrono::high_resolution_clock::now();
+    
     simulatedAnnealing(classes, m, true);
+    
+    auto stop = chrono::high_resolution_clock::now();
+    
+    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+    
+    cout << "----------------------------" << endl;
+    cout << "Algoritmen tog: " << duration.count() << " ms" << endl;
+    
+    // Om du vill ha sekunder med decimaler:
+    chrono::duration<double> elapsed = stop - start;
+    cout << "Tid i sekunder: " << elapsed.count() << " s" << endl;
 }
 
