@@ -11,8 +11,10 @@ YY=$2  # Second argument (Input file)
 
 # Run first Python script and save output to temp.txt
 echo "Running algo: $XX with input file $YY"
+#python:
 python "$XX" < "$YY" --write 
-#Ändra till ./"$XX" < "$YY" --write  för att köra c++
+#c++:
+#./"$XX" < "$YY" --write  
 
 # Run second Python script (visualization)
 echo "Running vis"

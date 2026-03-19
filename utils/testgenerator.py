@@ -51,7 +51,7 @@ def distribute_sum_with_bounds(target_sum, num_parts, ub):
 m = 3 #Number of machines
 c = 5 #Number of classes
 n = 10 #Number of jobs
-T = 15 #Optimal makespan
+T = 1000 #Optimal makespan
 
 jobs= [] #jobs[i] --> (processing time,class) for job i, i = 0, ..., n-1
   

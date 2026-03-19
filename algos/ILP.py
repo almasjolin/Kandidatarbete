@@ -18,7 +18,7 @@ def solve_ilp(n,p,m,classes):
     model = gp.Model("MSRS")
     
     M = sum(p.values())#satte som summar av alla processingtimes
-    epsilon = 0.001
+    epsilon = 0.05
 
     #VARIABLER
 
@@ -129,7 +129,7 @@ def solve_ilp(n,p,m,classes):
                 if j != j_prime:  # Olika jobb i samma klass
                     model.addConstr(z[j, j_prime] == 0,
                         name=f"resource_conflict_{j}_{j_prime}")
-                    
+       
     model.optimize()
 
     if model.status == GRB.OPTIMAL:
