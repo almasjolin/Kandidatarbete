@@ -129,13 +129,19 @@ def solve_ilp(n,p,m,classes):
                 if j != j_prime:  # Olika jobb i samma klass
                     model.addConstr(z[j, j_prime] == 0,
                         name=f"resource_conflict_{j}_{j_prime}")
-                    
+    
+    model.setParam("TimeLimit", 60)
     model.optimize()
+    
 
-    if model.status == GRB.OPTIMAL:
+    if model.status == GRB.TIME_LIMIT:
+        print("Time limit reached")
+    if model.SolCount > 0:
+        print(f"Best solution found with gap: {model.MIPGap:.2%}")
         t_sol = {j: t[j].X for j in range(n)}
         return T.X, t_sol
     else:
+        print("No feasible solution found")
         return None, None
     
 
