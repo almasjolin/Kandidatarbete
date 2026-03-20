@@ -53,6 +53,7 @@ c = 5 #Number of classes
 n = 15 #Number of jobs
 T = 500 #Optimal makespan
 
+
 jobs= [] #jobs[i] --> (processing time,class) for job i, i = 0, ..., n-1
   
 #class_process_times[c'] --> total processing time for class c', c' = 0,...,c-1

@@ -197,8 +197,8 @@ if len(M_h) == 1: # Step 5
     else:
         c_small.add(c)
 
-c_b_1_2 = set([c for c in c_b if class_time[c] < (3/4) * T])
-c_b_3_4 = set([c for c in c_b if class_time[c] >= (3/4) * T])
+c_b_1_2 = set([c for c in c_b if class_time[c-1] < (3/4) * T])
+c_b_3_4 = set([c for c in c_b if class_time[c-1] >= (3/4) * T])
 while len(M_h) >= 1 and len(c_b_1_2) >= 1 and len(c_3_4) >= 1: # Step 6
     m1 = M_h.pop()
     b = c_b_1_2.pop()

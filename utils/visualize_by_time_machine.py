@@ -4,6 +4,7 @@ import numpy as np # type: ignore
 import random
 random.seed(6215)
 
+T = 1000 #Optimal makespan
 # Read data from file
 with open("temp.txt", "r") as f:
     lines = f.readlines()
@@ -76,7 +77,7 @@ for i in range(1, m):
     ax.axvline(i * machine_width, color='black', linestyle='-', linewidth=1.5)
 
 # Add y-ticks, including last end time
-yticks = list(range(0, int(last_end_time) + 5, 5))
+yticks = list(range(0, int(last_end_time) + 200, 200))
 if last_end_time not in yticks:  # Ensure last_end_time is included if it's not an integer
     yticks.append(last_end_time)
 yticks = sorted(yticks)
@@ -96,6 +97,9 @@ ax.set_ylim(0, last_end_time)
 #ax.legend(handles=handles, loc="upper right")
 
 plt.grid(axis="y", linestyle="--", alpha=0.7)
+
+#Marking the optimal makespan T
+ax.axhline(y=T, color='black', linestyle='-', linewidth=2.5, label=f"Optimal T = {T}")
 
 plt.savefig("imgs/senast_genererade_bilden.png")
 plt.show()
