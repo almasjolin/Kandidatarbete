@@ -131,7 +131,7 @@ def solve_ilp(n,p,m,classes):
                         name=f"resource_conflict_{j}_{j_prime}")
 
     
-    model.setParam("TimeLimit", 60)
+    model.setParam("TimeLimit", 1800)
 
     model.optimize()
     
