@@ -101,6 +101,6 @@ plt.grid(axis="y", linestyle="--", alpha=0.7)
 #Marking the optimal makespan T
 ax.axhline(y=T, color='black', linestyle='-', linewidth=2.5, label=f"Optimal T = {T}")
 
-plt.savefig("imgs/senast_genererade_bilden.png")
+plt.savefig("imgs/latest_generated_image.png")
 plt.show()
 
