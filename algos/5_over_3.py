@@ -1,7 +1,6 @@
 import sys
 import time as tid
 
-sys.stdin = open(r"c:\Users\rebec\Kandidatarbete\tests\test_1.txt", "r")
 
 ## Read input ##
 job_class = [] # [i] --> class of i:th job

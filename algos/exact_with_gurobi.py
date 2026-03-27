@@ -15,7 +15,8 @@ job_class = {} # [i] --> class of i:th job, i = 0, ..., n-1
 job_time = {} # [i] --> duration of i:th job, i = 0, ..., n-1
 class2ids = {} # [c] --> list of id:s of jobs in class c, c = 1, ..., number of classes
 
-data = sys.stdin.readlines()
+with open("../tests/test_e2.txt") as f:
+    data = f.readlines()
 m = int(data[0]) # Number of machines
 n = 0 # Number of jobs
 for id, line in enumerate(data[1:]):

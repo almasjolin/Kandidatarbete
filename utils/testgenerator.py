@@ -77,4 +77,4 @@ np.random.shuffle(jobs)
 
 print(m)
 for job_time, job_class in jobs:
-    print(job_time, job_class)    
+    print(job_time, job_class)
