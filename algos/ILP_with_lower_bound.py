@@ -1,11 +1,10 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Feb 12 10:45:52 2026
+Created on Thu Mar 26 11:10:58 2026
 
-@author: almasjolin
+@author: idagu
 """
-# main.py
+
 import gurobipy as gp
 from gurobipy import GRB
 
@@ -17,9 +16,24 @@ from gurobipy import GRB
 def solve_ilp(n,p,m,classes):   
     model = gp.Model("MSRS")
     
-    M = sum(p.values())#satte som summar av alla processingtimes
-
+    M = sum(p.values())
     epsilon = 0.1
+    
+    #Find class with largest processing time
+    max_class_time = 0
+    for c in classes: 
+        class_time = 0
+        for j in classes[c]: 
+            class_time += p[j]
+        if class_time > max_class_time: 
+            max_class_time = class_time
+    
+    #Jobs sorted by processing times
+    sorted_p = dict(sorted(p.items(), key=lambda item: item[1]))
+    
+    #Lower bound of the makespan
+    L = max(max_class_time, sorted_p[m-1]+sorted_p[m])
+    print("Lower bound on makespan: ", L)
 
     #VARIABLES
 
@@ -36,7 +50,7 @@ def solve_ilp(n,p,m,classes):
     y = {}  # yj,j'
     z = {}  # zj,j'
 
-    for j in range(n):#defines the binary variables x,y,z for each pair of jobs
+    for j in range(n):#define binary variables x,y,z for each pair of jobs
         for j_prime in range(n):
             x[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"x_{j}_{j_prime}")
             y[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"y_{j}_{j_prime}")
@@ -52,6 +66,8 @@ def solve_ilp(n,p,m,classes):
     #Makespan contraints
     # T <= M
     model.addConstr(T <= M, name="T_upper_bound")
+    # T >= L
+    model.addConstr(T >= L, name="T_lower_bound")
 
     # T must be at least as large as the end time of each job
     for j in range(n):
@@ -116,7 +132,7 @@ def solve_ilp(n,p,m,classes):
 
 
     #Machine constraints
-    #At most m jobs can run in parallel
+    #At most m job can run in parallel
     for j in range(n):
         model.addConstr(
             gp.quicksum(z[j, j_prime] for j_prime in range(n)) <= m,
@@ -125,7 +141,7 @@ def solve_ilp(n,p,m,classes):
     #Resource constraints
     # Jobs in the same class cannot overlap
     for class_name, class_jobs in classes.items():
-        for j in class_jobs:
+        for j in class_jobs:#
             for j_prime in class_jobs:
                 if j != j_prime:  # Different jobs in the same class
                     model.addConstr(z[j, j_prime] == 0,
@@ -148,13 +164,3 @@ def solve_ilp(n,p,m,classes):
         print("No feasible solution found")
         return None, None
     
-
-
-
-
-
-
-
-
-
-
