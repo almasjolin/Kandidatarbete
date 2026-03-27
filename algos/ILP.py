@@ -17,7 +17,8 @@ from gurobipy import GRB
 def solve_ilp(n,p,m,classes):   
     model = gp.Model("MSRS")
     
-    M = sum(p.values())
+    M = sum(p.values())#satte som summar av alla processingtimes
+
     epsilon = 0.1
 
     #VARIABLES
