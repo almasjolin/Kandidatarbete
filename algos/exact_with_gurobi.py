@@ -15,8 +15,7 @@ job_class = {} # [i] --> class of i:th job, i = 0, ..., n-1
 job_time = {} # [i] --> duration of i:th job, i = 0, ..., n-1
 class2ids = {} # [c] --> list of id:s of jobs in class c, c = 1, ..., number of classes
 
-with open("../tests/test_e2.txt") as f:
-    data = f.readlines()
+data = sys.stdin.readlines()
 m = int(data[0]) # Number of machines
 n = 0 # Number of jobs
 for id, line in enumerate(data[1:]):
@@ -37,15 +36,9 @@ classes = list(class2ids.keys())
 
 start_time = time.perf_counter()
 
-T = max(
-    1/m * sum(job_time.values()),
-    max(
-        [sum([job_time[x] for x in class2ids[c]]) for c in classes]
-    ),
-    sum(sorted(job_time.values())[m-1:m+1])
-)
+T = 1/m * sum(job_time.values())
 
-print(f"Lower bound for optimal solution: T = {T}")
+print(f"Optimal solution: T = {T}")
 
 makespan, t_solution = solve_ilp(n, job_time, m, class2ids)
 sigma = machine_assignment(t_solution, m, job_time)
