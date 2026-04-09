@@ -36,9 +36,15 @@ classes = list(class2ids.keys())
 
 start_time = time.perf_counter()
 
-T = 1/m * sum(job_time.values())
+T = max(
+    1/m * sum(job_time),
+    max(
+        [sum([job_time[x] for x in class2ids[c]]) for c in classes]
+    ),
+    sum(sorted(job_time)[m-1:m+1])
+)
 
-print(f"Optimal solution: T = {T}")
+print(f"Lower bound for optimal solution: T = {T}")
 
 makespan, t_solution = solve_ilp(n, job_time, m, class2ids)
 sigma = machine_assignment(t_solution, m, job_time)
