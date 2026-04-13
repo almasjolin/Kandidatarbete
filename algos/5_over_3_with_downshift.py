@@ -1,6 +1,7 @@
 import sys
 import time as tid
 
+
 ## Read input ##
 job_class = [] # [i] --> class of i:th job
 job_time = [] # [i] --> duration of i:th job

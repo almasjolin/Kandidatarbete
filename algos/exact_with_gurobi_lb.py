@@ -37,11 +37,11 @@ classes = list(class2ids.keys())
 start_time = time.perf_counter()
 
 T = max(
-    1/m * sum(job_time.values()),
+    1/m * sum(job_time),
     max(
         [sum([job_time[x] for x in class2ids[c]]) for c in classes]
     ),
-    sum(sorted(job_time.values())[m-1:m+1])
+    sum(sorted(job_time)[m-1:m+1])
 )
 
 print(f"Lower bound for optimal solution: T = {T}")

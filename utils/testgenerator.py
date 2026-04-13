@@ -48,11 +48,10 @@ def distribute_sum_with_bounds(target_sum, num_parts, ub):
     
     return result
 
-m = 3 #Number of machines
-c = 5 #Number of classes
-n = 10 #Number of jobs
+m = 9 #Number of machines
+c = 10 #Number of classes
+n = 30 #Number of jobs
 T = 1000 #Optimal makespan
-
 
 jobs= [] #jobs[i] --> (processing time,class) for job i, i = 0, ..., n-1
   
@@ -77,4 +76,5 @@ np.random.shuffle(jobs)
 
 print(m)
 for job_time, job_class in jobs:
-    print(job_time, job_class)    
+    print(job_time, job_class)
+
