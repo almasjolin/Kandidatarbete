@@ -9,6 +9,7 @@ Created on Thu Apr  2 13:55:41 2026
 
 import gurobipy as gp
 from gurobipy import GRB
+import csv
 
 #MODEL
 #n is the number of jobs
@@ -156,10 +157,57 @@ def approx_ilp(n,p,m,classes , approx_makespan, approx_t):
                         name=f"resource_conflict_{j}_{j_prime}")
 
     
-    #Will break if it runs for more than 30 min
-    model.setParam("TimeLimit", 1800)
+    #Will break if it runs for more than 10 min
+    model.setParam("TimeLimit", 600)
 
-    model.optimize()
+    #DATA COlLECTION
+    
+    progress_data = []
+    
+    last_log_time = -5
+
+    def callback(model, where): 
+        nonlocal last_log_time
+        
+        if where == GRB.Callback.MIPSOL or where == GRB.Callback.MIP:
+            
+            if where == GRB.Callback.MIPSOL: 
+                best_objective = model.cbGet(GRB.Callback.MIPSOL_OBJBST)
+                best_bound = model.cbGet(GRB.Callback.MIPSOL_OBJBND)
+                
+            else: 
+                best_objective = model.cbGet(GRB.Callback.MIP_OBJBST)
+                best_bound = model.cbGet(GRB.Callback.MIP_OBJBND)
+    
+            run_time = model.cbGet(GRB.Callback.RUNTIME)
+            
+            #Save data every 5 seconds or when new solutions or lower bounds are found
+            if best_objective < 10**15 and \
+                (run_time - last_log_time >= 5 or \
+                not progress_data or \
+                best_objective != progress_data[-1]['Incumbent'] or \
+                best_bound != progress_data[-1]['BestBound']):
+    
+                progress_data.append({
+                    'Incumbent': best_objective, 
+                    'BestBound': best_bound, 
+                    'Time': run_time
+                })
+    
+    
+                last_log_time = run_time
+            
+            
+    model.optimize(callback)
+    
+    fields = ['Time', 'Incumbent', 'BestBound']
+    
+    with open('progress_data.csv', 'w', newline= '') as csvfile: 
+        writer = csv.DictWriter(csvfile, fieldnames=fields)
+        
+        writer.writeheader()
+        
+        writer.writerows(progress_data)
     
 
     if model.status == GRB.TIME_LIMIT:
