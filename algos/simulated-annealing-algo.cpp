@@ -4,6 +4,7 @@
 #include <chrono>
 #include <map>
 #include <bits/stdc++.h>
+#include <fstream>
 using namespace std;
 
 #define rep(i,a,b) for(int i = a; i < b; i++)
@@ -101,7 +102,6 @@ void simulatedAnnealing(vector<Class> classes, int m, bool write = false) {
     vector<int> prio(n);
     rep(i,0,n) prio[i] = i;
 
-
     struct Score {
         R makespan;
 
@@ -109,7 +109,6 @@ void simulatedAnnealing(vector<Class> classes, int m, bool write = false) {
             return makespan;
         }
     };
-
 
     auto getScore = [](int cn, int n, int m, vector<pair<int, R>> & jobs, vector<int> & prio) {
         Score score;
@@ -196,6 +195,11 @@ void simulatedAnnealing(vector<Class> classes, int m, bool write = false) {
     vector<int> old_prio = prio, best_prio = prio;
     R bestScore = getScore(cn, n, m, jobs, prio);
     R curScore = bestScore;
+    
+    //Save data
+    ofstream logfile("progress_data.csv");
+    logfile << "Time,Makespan\n"; 
+    auto t_start = chrono::high_resolution_clock::now();
 
     int ccnt = 0, cnt = 0;
     rep(iter,0,iterations) {
@@ -210,6 +214,10 @@ void simulatedAnnealing(vector<Class> classes, int m, bool write = false) {
             cout << score << endl;
             bestScore = score;
             best_prio = prio;
+            
+            auto t_now = chrono::high_resolution_clock::now();
+            chrono::duration<double> elapsed = t_now - t_start;
+            logfile << elapsed.count() << "," << bestScore.value() << "\n";
         }
 
         if (change) {
@@ -222,6 +230,9 @@ void simulatedAnnealing(vector<Class> classes, int m, bool write = false) {
 
         temp *= cooling_rate;
     }
+    
+    logfile.close();
+    
     cout << R(ccnt, cnt) << endl;
 
     auto writePlacement = [](int cn, int n, int m, vector<pair<int, R>> & jobs, vector<int> & prio) {

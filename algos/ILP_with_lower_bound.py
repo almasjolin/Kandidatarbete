@@ -20,20 +20,13 @@ def solve_ilp(n,p,m,classes):
     M = sum(p.values())
     epsilon = 0.1
     
-    #Find class with largest processing time
-    max_class_time = 0
-    for c in classes: 
-        class_time = 0
-        for j in classes[c]: 
-            class_time += p[j]
-        if class_time > max_class_time: 
-            max_class_time = class_time
-    
-    #Jobs sorted by processing times
-    sorted_p = dict(sorted(p.items(), key=lambda item: item[1]))
-    
     #Lower bound of the makespan
-    L = max(max_class_time, sorted_p[m-1]+sorted_p[m])
+    L = max(
+        max(
+            [sum([p[x] for x in classes[c]]) for c in classes]
+        ),
+        sum(sorted(p.values(),reverse=True)[m-1:m+1])
+    )
     print("Lower bound on makespan: ", L)
 
     #VARIABLES
@@ -152,7 +145,7 @@ def solve_ilp(n,p,m,classes):
     #Will break if it runs for more than 10 min
     model.setParam("TimeLimit", 600)
 
-    #DATA COlLECTION
+    #DATA COLLECTION
     
     progress_data = []
     
