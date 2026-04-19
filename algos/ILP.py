@@ -136,7 +136,7 @@ def solve_ilp(n,p,m,classes):
     #Will break if it runs for more than 10 min
     model.setParam("TimeLimit", 600)
 
-    #DATA COlLECTION
+    #DATA COLLECTION
     
     progress_data = []
     

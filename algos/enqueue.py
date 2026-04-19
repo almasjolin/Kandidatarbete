@@ -34,7 +34,7 @@ T = max(
     max(
         [sum([job_time[x] for x in class2ids[c]]) for c in classes]
     ),
-    sum(sorted(job_time)[m-1:m+1])
+    sum(sorted(job_time,reverse=True)[m-1:m+1])
 )
 
 print(f"Lower bound for optimal solution: T = {T}")
