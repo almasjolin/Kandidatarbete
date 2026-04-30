@@ -54,7 +54,7 @@ def create_breaks_with_bounds(target_sum, num_parts, ub):
     return result
 
 m = 35 #Number of machines
-c = 70 #Number of classes
+K = 70 #Number of classes
 n = 210 #Number of jobs
 T = 1000 #Optimal makespan
 
@@ -66,11 +66,11 @@ total_time = m*T
 machine_breaks = [i * T for i in range(1, m)]
 
 #Create break points for the classes
-class_breaks = create_breaks_with_bounds(total_time, c, [T]*c)
+class_breaks = create_breaks_with_bounds(total_time, K, [T]*K)
 
 all_breaks = sorted(list(set(machine_breaks + class_breaks)))
 
-#Fewer jobs than break points (can happen only if n < m + c)
+#Fewer jobs than break points (can happen only if n < m + K)
 if n < len(all_breaks): 
     
     #Replace class break points with machine break points
