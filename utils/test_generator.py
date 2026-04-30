@@ -53,9 +53,9 @@ def create_breaks_with_bounds(target_sum, num_parts, ub):
     
     return result
 
-m = 6 #Number of machines
-c = 8 #Number of classes
-n = 13 #Number of jobs
+m = 35 #Number of machines
+c = 70 #Number of classes
+n = 210 #Number of jobs
 T = 1000 #Optimal makespan
 
 total_time = m*T

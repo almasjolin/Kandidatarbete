@@ -17,7 +17,7 @@ import csv
 def solve_ilp(n,p,m,classes):   
     model = gp.Model("MSRS")
     
-    M = 1210
+    M = 1149
 
     epsilon = 0.1
 

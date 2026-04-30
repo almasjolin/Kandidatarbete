@@ -2,7 +2,7 @@
 
 # List of Python scripts and their labels
 declare -A script_labels=(
-    ["new_test_generator.py"]="test"
+    ["test_generator.py"]="test"
 )
 
 # Number of times each script should run
