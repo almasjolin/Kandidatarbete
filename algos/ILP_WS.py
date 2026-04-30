@@ -16,7 +16,7 @@ import csv
 #p is a dictionary: p[i] --> duration of i:th job, i = 0, ..., n-1
 #m is the number of machines
 #classes is a dictionary: classes[c'] --> list of id:s of jobs in class c', c' = 1, ...,c
-def approx_ilp(n,p,m,classes , approx_makespan, approx_t):   
+def ilp_ws(n,p,m,classes , approx_makespan, approx_t):   
     model = gp.Model("MSRS")
     
     
