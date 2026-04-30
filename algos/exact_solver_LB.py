@@ -46,6 +46,8 @@ T = max(
 
 print(f"Lower bound for optimal solution: T = {T}")
 
+## Run ##
+
 makespan, t_solution = ilp_lb(n, job_time, m, class2ids)
 sigma = machine_assignment(t_solution, m, job_time)
 

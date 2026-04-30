@@ -70,7 +70,6 @@ end_time = time.perf_counter()
 
 print(f"Running time: {end_time - start_time:.4f} seconds")
 
-
 fraction = makespan / T
 
 print(f"Makespan: {makespan}")

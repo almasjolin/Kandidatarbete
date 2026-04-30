@@ -15,7 +15,7 @@ import csv
 #n is the number of jobs
 #p is a dictionary: p[i] --> duration of i:th job, i = 0, ..., n-1
 #m is the number of machines
-#classes is a dictionary: classes[c'] --> list of id:s of jobs in class c', c' = 1, ...,c
+#classes is a dictionary: classes[c] --> list of id:s of jobs in class c, c = 1, ...,K
 def ilp_cmb(n,p,m,classes , approx_makespan, approx_t):   
     model = gp.Model("MSRS")
     

@@ -60,6 +60,7 @@ T = max(
 print(f"Lower bound for optimal solution: T = {T}")
 
 ## Run ##
+
 approx_makespan, approx_t = read_approx("temp.txt")
 
 start_time = time.perf_counter()
