@@ -10,7 +10,7 @@ Created on Tue Apr 28 13:47:25 2026
 
 import sys
 import time
-from ILP_combined import combined_ilp
+from ILP_CMB import ilp_cmb
 from machine_assignment import machine_assignment
 
 ## Read approximation results from temp.txt ##
@@ -64,7 +64,7 @@ print(f"Lower bound for optimal solution: T = {T}")
 approx_makespan, approx_t = read_approx("temp.txt")
 
 start_time = time.perf_counter()
-makespan, t_solution = combined_ilp(n, job_time, m, class2ids, approx_makespan, approx_t)
+makespan, t_solution = ilp_cmb(n, job_time, m, class2ids, approx_makespan, approx_t)
 sigma = machine_assignment(t_solution, m, job_time)
 end_time = time.perf_counter()
 

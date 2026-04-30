@@ -7,7 +7,7 @@ Created on Thu Mar 26 11:38:40 2026
 
 import sys
 import time
-from ILP_with_lower_bound import solve_ilp
+from ILP_LB import ilp_lb
 from machine_assignment import machine_assignment
 
 ## Read input ##
@@ -46,7 +46,7 @@ T = max(
 
 print(f"Lower bound for optimal solution: T = {T}")
 
-makespan, t_solution = solve_ilp(n, job_time, m, class2ids)
+makespan, t_solution = ilp_lb(n, job_time, m, class2ids)
 sigma = machine_assignment(t_solution, m, job_time)
 
 end_time = time.perf_counter()

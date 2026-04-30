@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Apr 28 13:33:29 2026
+Created on Thu Apr 16 19:55:52 2026
 
-@author: almasjolin
+@author: rebec
 """
-
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -16,21 +14,12 @@ import csv
 #p is a dictionary: p[i] --> duration of i:th job, i = 0, ..., n-1
 #m is the number of machines
 #classes is a dictionary: classes[c'] --> list of id:s of jobs in class c', c' = 1, ...,c
-def combined_ilp(n,p,m,classes , approx_makespan, approx_t):   
+def ilp_ic(n,p,m,classes):   
     model = gp.Model("MSRS")
     
-    
-    M = approx_makespan
+    M = 1149
+
     epsilon = 0.1
-    
-    #Lower bound of the makespan
-    L = max(
-        max(
-            [sum([p[x] for x in classes[c]]) for c in classes]
-        ),
-        sum(sorted(p.values(),reverse=True)[m-1:m+1])
-    )
-    print("Lower bound on makespan: ", L)
 
     #VARIABLES
 
@@ -41,18 +30,13 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
     #Makespan
     T = model.addVar(lb=0, vtype=GRB.CONTINUOUS, name="T")
 
-    #Uses makespan from the approximation algorithm as a start value
-    T.Start = approx_makespan
-    #Uses starting times from the approximation algorithm as start values for each job
-    for j in range(n):
-        t[j].Start = approx_t[j]
 
     #Binary variables
     x = {}  # xj,j'
     y = {}  # yj,j'
     z = {}  # zj,j'
 
-    for j in range(n):#define binary variables x,y,z for each pair of jobs
+    for j in range(n):#defines the binary variables x,y,z for each pair of jobs
         for j_prime in range(n):
             x[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"x_{j}_{j_prime}")
             y[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"y_{j}_{j_prime}")
@@ -68,8 +52,6 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
     #Makespan contraints
     # T <= M
     model.addConstr(T <= M, name="T_upper_bound")
-    # T >= L
-    model.addConstr(T >= L, name="T_lower_bound")
 
     # T must be at least as large as the end time of each job
     for j in range(n):
@@ -120,7 +102,6 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
                name=f"y_ind2_{j}_{j_prime}"
            )
 
-
     #z-contraints
 
     for j in range(n):
@@ -145,7 +126,7 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
 
 
     #Machine constraints
-    #At most m job can run in parallel
+    #At most m jobs can run in parallel
     for j in range(n):
         model.addConstr(
             gp.quicksum(z[j, j_prime] for j_prime in range(n)) <= m,
@@ -154,7 +135,7 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
     #Resource constraints
     # Jobs in the same class cannot overlap
     for class_name, class_jobs in classes.items():
-        for j in class_jobs:#
+        for j in class_jobs:
             for j_prime in class_jobs:
                 if j != j_prime:  # Different jobs in the same class
                     model.addConstr(z[j, j_prime] == 0,
@@ -164,7 +145,7 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
     #Will break if it runs for more than 10 min
     model.setParam("TimeLimit", 600)
 
-    #DATA COLLECTION
+    #DATA COlLECTION
     
     progress_data = []
     
@@ -206,7 +187,7 @@ def combined_ilp(n,p,m,classes , approx_makespan, approx_t):
     
     fields = ['Time', 'Incumbent', 'BestBound']
     
-    with open('progress_data.csv', 'w', newline= '') as csvfile: 
+    with open('results/progress_data_a3_ic.csv', 'w', newline= '') as csvfile: 
         writer = csv.DictWriter(csvfile, fieldnames=fields)
         
         writer.writeheader()

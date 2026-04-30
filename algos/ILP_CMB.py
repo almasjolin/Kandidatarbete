@@ -1,9 +1,11 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Mar 26 11:10:58 2026
+Created on Tue Apr 28 13:33:29 2026
 
-@author: idagu
+@author: almasjolin
 """
+
 
 import gurobipy as gp
 from gurobipy import GRB
@@ -14,10 +16,11 @@ import csv
 #p is a dictionary: p[i] --> duration of i:th job, i = 0, ..., n-1
 #m is the number of machines
 #classes is a dictionary: classes[c'] --> list of id:s of jobs in class c', c' = 1, ...,c
-def solve_ilp(n,p,m,classes):   
+def ilp_cmb(n,p,m,classes , approx_makespan, approx_t):   
     model = gp.Model("MSRS")
     
-    M = sum(p.values())
+    
+    M = approx_makespan
     epsilon = 0.1
     
     #Lower bound of the makespan
@@ -38,6 +41,11 @@ def solve_ilp(n,p,m,classes):
     #Makespan
     T = model.addVar(lb=0, vtype=GRB.CONTINUOUS, name="T")
 
+    #Uses makespan from the approximation algorithm as a start value
+    T.Start = approx_makespan
+    #Uses starting times from the approximation algorithm as start values for each job
+    for j in range(n):
+        t[j].Start = approx_t[j]
 
     #Binary variables
     x = {}  # xj,j'
@@ -72,34 +80,45 @@ def solve_ilp(n,p,m,classes):
 
     for j in range(n):
         for j_prime in range(n):
-            # t_j' <= t_j + (1 - x_j,j')*M is called constraint1 
-            model.addConstr(
-                t[j_prime] <= t[j] + (1 - x[j, j_prime]) * M,
-                name=f"x_constraint1_{j}_{j_prime}"
+            if j == j_prime:
+               model.addConstr(x[j,j] == 1)
+               continue
+
+        # x = 1 ⇒ t_j' ≤ t_j
+            model.addGenConstrIndicator(
+                x[j, j_prime], True,
+                t[j_prime] <= t[j],
+                name=f"x_ind1_{j}_{j_prime}"
             )
-            
-            # t_j + epsilon <= t_j' + x_j,j'*M is called constraint2
-            model.addConstr(
-                t[j] + epsilon <= t[j_prime] + x[j, j_prime] * M,
-                name=f"x_constraint2_{j}_{j_prime}"
+
+        # x = 0 ⇒ t_j' ≥ t_j + epsilon
+            model.addGenConstrIndicator(
+                x[j, j_prime], False,
+                t[j_prime] >= t[j] + epsilon,
+                name=f"x_ind2_{j}_{j_prime}"
             )
 
     #y-constraints (implies that y_jj' = 1 iff t_j<=t_j' + p_j')
 
     for j in range(n):
-        for j_prime in range(n):
-            # t_j + epsilon <= t_j' + p_j' + (1 - y_j,j')*M is called constraint1 
-            model.addConstr(
-                t[j] + epsilon <= t[j_prime] + p[j_prime] + (1 - y[j, j_prime]) * M,
-                name=f"y_constraint1_{j}_{j_prime}"
-            )
-            
-            # t_j' + p_j' <= t_j + y_j,j'*M is called constraint2
-            model.addConstr(
-                t[j_prime] + p[j_prime] <= t[j] + y[j, j_prime] * M,
-                name=f"y_constraint2_{j}_{j_prime}"
-            )
+       for j_prime in range(n):
+           if j == j_prime:
+               model.addConstr(y[j,j] == 1)
+               continue
 
+        # y = 1 ⇒ t_j ≤ t_j' + p_j'
+           model.addGenConstrIndicator(
+               y[j, j_prime], True,
+               t[j] <= t[j_prime] + p[j_prime],
+               name=f"y_ind1_{j}_{j_prime}"
+           )
+
+        # y = 0 ⇒ t_j ≥ t_j' + p_j' + epsilon
+           model.addGenConstrIndicator(
+               y[j, j_prime], False,
+               t[j] >= t[j_prime] + p[j_prime] + epsilon,
+               name=f"y_ind2_{j}_{j_prime}"
+           )
 
 
     #z-contraints
@@ -204,4 +223,3 @@ def solve_ilp(n,p,m,classes):
     else:
         print("No feasible solution found")
         return None, None
-    
