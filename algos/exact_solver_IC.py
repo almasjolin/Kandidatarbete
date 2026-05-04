@@ -13,7 +13,7 @@ from machine_assignment import machine_assignment
 ## Read input ##
 job_class = {} # [i] --> class of i:th job, i = 0, ..., n-1
 job_time = {} # [i] --> duration of i:th job, i = 0, ..., n-1
-class2ids = {} # [c] --> list of id:s of jobs in class c, c = 1, ..., number of classes
+class2ids = {} # [c] --> list of id:s of jobs in class c, c = 1, ..., K
 
 data = sys.stdin.readlines()
 m = int(data[0]) # Number of machines

@@ -173,9 +173,10 @@ def ilp_std(n,p,m,classes):
     
                 last_log_time = run_time
             
-            
+    #OPTIMIZE       
     model.optimize(callback)
     
+    #Save data
     fields = ['Time', 'Incumbent', 'BestBound']
     
     with open('progress_data.csv', 'w', newline= '') as csvfile: 

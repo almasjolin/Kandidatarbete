@@ -58,40 +58,38 @@ K = 70 #Number of classes
 n = 210 #Number of jobs
 T = 1000 #Optimal makespan
 
-total_time = m*T
+W = m*T
 
 #Create the processing times for the jobs by creating break points
 
-#Make sure that some jobs finishes exactly at T for each machine
-machine_breaks = [i * T for i in range(1, m)]
+#STEP 1: Create break points for the classes
+class_breaks = create_breaks_with_bounds(W, K, [T]*K)
 
-#Create break points for the classes
-class_breaks = create_breaks_with_bounds(total_time, K, [T]*K)
+#STEP 2: Make sure that some jobs finishes exactly at T for each machine
+machine_breaks = [i * T for i in range(1, m)]
 
 all_breaks = sorted(list(set(machine_breaks + class_breaks)))
 
-#Fewer jobs than break points (can happen only if n < m + K)
+#STEP 3: Make sure there are exactly n break points
+#Fewer jobs than break points
 if n < len(all_breaks): 
-    
+    i = 0
     #Replace class break points with machine break points
-    for i in range(len(all_breaks)-n):
+    while n < len(all_breaks):
         class_breaks[i] = 1000*(i+1)
-        
-    all_breaks = sorted(list(set(machine_breaks + class_breaks)))
-        
+        i = i+1
+        all_breaks = sorted(list(set(machine_breaks + class_breaks)))
+
+#More jobs than break points        
 else: 
-    #Create the remaining break points
-    internal_breaks = random.sample(range(1, total_time), n - len(all_breaks))
-    
-    all_breaks = sorted(list(set(all_breaks + internal_breaks)))
-    
     #If duplicates
     while len(all_breaks) < n: 
-        new_break = random.randint(1, total_time - 1)
+        new_break = random.randint(1, W - 1)
         if new_break not in all_breaks:
             all_breaks.append(new_break)
             all_breaks.sort()
 
+#STEP 4: Generate processing time and class for each job
 jobs = []
 
 last_time = 0
@@ -104,6 +102,7 @@ for b in all_breaks:
     if b in class_breaks: 
         last_class += 1
 
+#Shuffle the jobs
 np.random.shuffle(jobs)
 
 print(m)

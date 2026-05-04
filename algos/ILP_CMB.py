@@ -201,9 +201,10 @@ def ilp_cmb(n,p,m,classes , approx_makespan, approx_t):
     
                 last_log_time = run_time
             
-            
+    #OPTIMIZE        
     model.optimize(callback)
     
+    #Save data
     fields = ['Time', 'Incumbent', 'BestBound']
     
     with open('progress_data.csv', 'w', newline= '') as csvfile: 

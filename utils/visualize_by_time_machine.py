@@ -5,6 +5,7 @@ import random
 random.seed(6215)
 
 T = 1000 #Optimal makespan
+
 # Read data from file
 with open("temp.txt", "r") as f:
     lines = f.readlines()

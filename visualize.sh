@@ -9,17 +9,16 @@ fi
 XX=$1  # First argument (Python script to run)
 YY=$2  # Second argument (Input file)
 
-# Run first Python script and save output to temp.txt
+# Run first Python/C++ script and save output to temp.txt
 echo "Running algo: $XX with input file $YY"
 #python:
 python "$XX" < "$YY" --write 
-#c++:
+#C++:
 #./"$XX" < "$YY" --write  
 
 # Run second Python script (visualization)
 echo "Running vis"
 python utils/visualize_by_time_machine.py
-
 
 # Remove temp file
 # rm temp.txt

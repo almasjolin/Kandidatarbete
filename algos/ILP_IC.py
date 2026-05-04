@@ -182,12 +182,13 @@ def ilp_ic(n,p,m,classes):
     
                 last_log_time = run_time
             
-            
+    #OPTIMIZE       
     model.optimize(callback)
     
+    #Save data
     fields = ['Time', 'Incumbent', 'BestBound']
     
-    with open('results/progress_data_a3_ic.csv', 'w', newline= '') as csvfile: 
+    with open('results/progress_data.csv', 'w', newline= '') as csvfile: 
         writer = csv.DictWriter(csvfile, fieldnames=fields)
         
         writer.writeheader()
