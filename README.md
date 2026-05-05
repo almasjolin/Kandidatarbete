@@ -44,6 +44,7 @@ The code for these algorithms was not implemented by us. It is sourced from the 
     * `algos/5_over_3_with_downshift.py`
     * `algos/5_over_3_with_enqueue.py`
     * `algos/enqueue.py`
+    * `algos/greedy.py`
 
 ## Prerequisites
 
