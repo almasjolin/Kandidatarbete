@@ -1,0 +1,185 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Tue Apr 14 14:39:33 2026
+
+@author: almasjolin
+"""
+
+
+
+import gurobipy as gp
+from gurobipy import GRB
+
+#MODEL
+#n is the number of jobs
+#p is a dictionary: p[i] --> duration of i:th job, i = 0, ..., n-1
+#m is the number of machines
+#classes is a dictionary: classes[c'] --> list of id:s of jobs in class c', c' = 1, ...,c
+def approx_hint_ilp(n,p,m,classes , approx_makespan, approx_t):   
+    model = gp.Model("MSRS")
+    
+    
+    M = approx_makespan
+    epsilon = 0.1
+    
+    #Find class with largest processing time
+    max_class_time = 0
+    for c in classes: 
+        class_time = 0
+        for j in classes[c]: 
+            class_time += p[j]
+        if class_time > max_class_time: 
+            max_class_time = class_time
+    
+    #Jobs sorted by processing times
+    sorted_p = dict(sorted(p.items(), key=lambda item: item[1]))
+    
+    #Lower bound of the makespan
+    L = max(max_class_time, sorted_p[m-1]+sorted_p[m])
+    print("Lower bound on makespan: ", L)
+
+    #VARIABLES
+
+    #Start times
+    t = model.addVars(range(n), lb=0, vtype=GRB.CONTINUOUS, name="t")
+
+
+    #Makespan
+    T = model.addVar(lb=0, vtype=GRB.CONTINUOUS, name="T")
+
+    #Uses makespan from the approximation algorithm as a start value
+    T.Start = approx_makespan
+    #Uses starting times from the approximation algorithm as start values for each job
+    for j in range(n):
+        t[j].Start = approx_t[j]
+
+    #Binary variables
+    x = {}  # xj,j'
+    y = {}  # yj,j'
+    z = {}  # zj,j'
+
+    for j in range(n):#define binary variables x,y,z for each pair of jobs
+        for j_prime in range(n):
+            x[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"x_{j}_{j_prime}")
+            y[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"y_{j}_{j_prime}")
+            z[j, j_prime] = model.addVar(vtype=GRB.BINARY, name=f"z_{j}_{j_prime}")
+    
+    # Variable hints for binary variables based on approximation start times
+    for j in range(n):
+        for j_prime in range(n):
+            x_hint = 1 if approx_t[j_prime] <= approx_t[j] else 0
+            y_hint = 1 if approx_t[j] < approx_t[j_prime] + p[j_prime] else 0
+            z_hint = 1 if (x_hint == 1 and y_hint == 1) else 0
+            x[j, j_prime].VarHintVal = x_hint
+            y[j, j_prime].VarHintVal = y_hint
+            z[j, j_prime].VarHintVal = z_hint
+
+
+    #CONSTRAINTS
+
+    #Objective function
+    model.setObjective(T, GRB.MINIMIZE)
+
+
+    #Makespan contraints
+    # T <= M
+    model.addConstr(T <= M, name="T_upper_bound")
+    # T >= L
+    model.addConstr(T >= L, name="T_lower_bound")
+
+    # T must be at least as large as the end time of each job
+    for j in range(n):
+        model.addConstr(t[j] + p[j] <= T, name=f"makespan_{j}")
+
+
+    #x-constraints (implies that x_jj'=1 iff t_j'<=t_j)
+
+    for j in range(n):
+        for j_prime in range(n):
+            # t_j' <= t_j + (1 - x_j,j')*M is called constraint1 
+            model.addConstr(
+                t[j_prime] <= t[j] + (1 - x[j, j_prime]) * M,
+                name=f"x_constraint1_{j}_{j_prime}"
+            )
+            
+            # t_j + epsilon <= t_j' + x_j,j'*M is called constraint2
+            model.addConstr(
+                t[j] + epsilon <= t[j_prime] + x[j, j_prime] * M,
+                name=f"x_constraint2_{j}_{j_prime}"
+            )
+
+    #y-constraints (implies that y_jj' = 1 iff t_j<=t_j' + p_j')
+
+    for j in range(n):
+        for j_prime in range(n):
+            # t_j + epsilon <= t_j' + p_j' + (1 - y_j,j')*M is called constraint1 
+            model.addConstr(
+                t[j] + epsilon <= t[j_prime] + p[j_prime] + (1 - y[j, j_prime]) * M,
+                name=f"y_constraint1_{j}_{j_prime}"
+            )
+            
+            # t_j' + p_j' <= t_j + y_j,j'*M is called constraint2
+            model.addConstr(
+                t[j_prime] + p[j_prime] <= t[j] + y[j, j_prime] * M,
+                name=f"y_constraint2_{j}_{j_prime}"
+            )
+
+
+
+    #z-contraints
+
+    for j in range(n):
+        for j_prime in range(n):
+            # z_j,j' <= y_j,j'
+            model.addConstr(
+                z[j, j_prime] <= y[j, j_prime],
+                name=f"z_constraint1_{j}_{j_prime}"
+            )
+            
+            # z_j,j' <= x_j,j'
+            model.addConstr(
+                z[j, j_prime] <= x[j, j_prime],
+                name=f"z_constraint2_{j}_{j_prime}"
+            )
+            
+            # x_j,j' + y_j,j' - 1 <= z_j,j'
+            model.addConstr(
+                x[j, j_prime] + y[j, j_prime] - 1 <= z[j, j_prime],
+                name=f"z_constraint3_{j}_{j_prime}"
+            )
+
+
+    #Machine constraints
+    #At most m job can run in parallel
+    for j in range(n):
+        model.addConstr(
+            gp.quicksum(z[j, j_prime] for j_prime in range(n)) <= m,
+            name=f"machine_limit_{j}")
+
+    #Resource constraints
+    # Jobs in the same class cannot overlap
+    for class_name, class_jobs in classes.items():
+        for j in class_jobs:#
+            for j_prime in class_jobs:
+                if j != j_prime:  # Different jobs in the same class
+                    model.addConstr(z[j, j_prime] == 0,
+                        name=f"resource_conflict_{j}_{j_prime}")
+
+    
+    #Will break if it runs for more than 30 min
+    model.setParam("TimeLimit", 1800)
+
+    model.optimize()
+    
+
+    if model.status == GRB.TIME_LIMIT:
+        print("Time limit reached")
+    if model.SolCount > 0:
+        print(f"Best solution found with gap: {model.MIPGap:.2%}")
+        t_sol = {j: t[j].X for j in range(n)}
+        return T.X, t_sol
+    else:
+        print("No feasible solution found")
+        return None, None
+    
