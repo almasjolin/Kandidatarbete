@@ -35,7 +35,7 @@ Our main contribution is an exact solver based on an integer linear programming 
 ## Third-party code and acknowledgements
 To evaluate the performance of our exact solver, we compare it againts approximation algorithms and heuristics. We also rely on certain scripts for test generation and visualization.
 
-The code for these algorithms was not implemented by us. It is sourced from the "bachelor-thesis-project-MSRS" repository and can be found here: https://github.com/ollelapidus/bachelor-thesis-project-MSRS. **We have explicit permission from the author to use and include their code in this project.**
+The code for these algorithms and scripts was not implemented by us. It is sourced from the "bachelor-thesis-project-MSRS" repository and can be found here: https://github.com/ollelapidus/bachelor-thesis-project-MSRS. **We have explicit permission from the author to use and include their code in this project.**
 
 **Sourced files include:**
 * **Included algorithms:** 
